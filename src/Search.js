@@ -2,13 +2,23 @@ import React from 'react'
 import {Link} from 'react-router-dom'
 import * as BooksAPI from './BooksAPI'
 import ListBooks from './ListBooks.js'
+import PropTypes from 'prop-types'
 import './App.css'
+import cover404 from './icons/cover404.jpg'
+
+var notFoundBook = [{
+  imageLinks:{thumbnail : cover404},
+  title : 'Books not found',
+}];
 
 class Search extends React.Component {
+  static propTypes = {
+    searchResult: PropTypes.array
+  }
+
   constructor(props) {
     super(props);
     this.state = {
-      search: '',
       searchResult: []
     };
 
@@ -16,11 +26,12 @@ class Search extends React.Component {
   }
 
   handleChange(event) {
-    this.setState({search: event.target.value});
-
-    BooksAPI.search(event.target.value,20).then((books) => {
-      this.setState({searchResult: books})
-    });
+    if(event.target.value !== '' )
+      BooksAPI.search(event.target.value,20).then((books) => {
+        books.error ? this.setState({searchResult: notFoundBook}) : this.setState({searchResult: books});
+      });
+    else
+      this.setState({searchResult: []});
   }
 
   render(){
@@ -38,7 +49,7 @@ class Search extends React.Component {
               However, remember that the BooksAPI.search method DOES search by title or author. So, don't worry if
               you don't find a specific author or title. Every search is limited by search terms.
             */}
-            <input type="text" placeholder="Search by title or author" value={this.state.search} onChange={this.handleChange}/>
+            <input type="text" placeholder="Search by title or author" onChange={this.handleChange}/>
 
           </div>
         </div>
