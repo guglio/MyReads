@@ -11,8 +11,8 @@ class ListBooks extends React.Component {
 
     return(
       <ol className="books-grid">
-        {showBooks.map((books) => (
-          <li key={books.id}>
+        {showBooks.map((books,index) => (
+          <li key={index}>
             <div className="book">
               <div className="book-top">
                 <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: 'url('+books.imageLinks.thumbnail+')' }}></div>
@@ -22,13 +22,13 @@ class ListBooks extends React.Component {
                     <option value="currentlyReading">Currently Reading</option>
                     <option value="wantToRead">Want to Read</option>
                     <option value="read">Read</option>
-                    <option value="none">None</option>
+                    <option value="none" default>None</option>
                   </select>
                 </div>
               </div>
               <div className="book-title">{books.title}</div>
               <div className="book-authors">
-              {books.authors ? books.authors.map((authors) => <span>{authors}<br/></span>):''}</div>
+              {books.authors ? books.authors.map((authors,index) => <span key={index}>{authors}<br/></span>):''}</div>
             </div>
           </li>
         ))}
