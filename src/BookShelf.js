@@ -12,7 +12,8 @@ class BookShelf extends React.Component{
     this.state = {
       currentlyReading:[],
       wantToRead:[],
-      read:[]
+      read:[],
+      loading: true
     };
   }
 
@@ -36,9 +37,10 @@ class BookShelf extends React.Component{
       }, []);
 
       this.setState({
-        currentlyReading:shelfs.currentlyReading,
-        wantToRead:shelfs.wantToRead,
-        read:shelfs.read
+        currentlyReading:shelfs.currentlyReading ? shelfs.currentlyReading : [],
+        wantToRead:shelfs.wantToRead ? shelfs.wantToRead : [],
+        read:shelfs.read ? shelfs.read : [],
+        loading:false
       })
     });
 
@@ -53,24 +55,27 @@ class BookShelf extends React.Component{
         </div>
         <div className="list-books-content">
           <div>
-            <div className="bookshelf">
+            {this.state.loading ? <h2 style={{textAlign:'center'}} className="loading">Loading<span>.</span><span>.</span><span>.</span></h2> : ''}
+            {this.state.currentlyReading.length > 0 ? <div className="bookshelf">
               <h2 className="bookshelf-title">Currently Reading</h2>
               <div className="bookshelf-books">
                 <ListBooks books={this.state.currentlyReading} />
               </div>
-            </div>
+            </div> : ''}
+            {this.state.wantToRead.length > 0 ?
             <div className="bookshelf">
               <h2 className="bookshelf-title">Want to Read</h2>
               <div className="bookshelf-books">
                 <ListBooks books={this.state.wantToRead} />
               </div>
-            </div>
+            </div> : ''}
+            {this.state.read.length > 0 ?
             <div className="bookshelf">
               <h2 className="bookshelf-title">Read</h2>
               <div className="bookshelf-books">
                 <ListBooks books={this.state.read} />
               </div>
-            </div>
+            </div> : ''}
           </div>
         </div>
         <div className="open-search">
