@@ -9,6 +9,7 @@ import cover404 from './icons/cover404.jpg'
 var notFoundBook = [{
   imageLinks:{thumbnail : cover404},
   title : 'Books not found',
+  shelf : 'hide'
 }];
 
 class Search extends React.Component {
