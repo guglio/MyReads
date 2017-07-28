@@ -13,37 +13,58 @@ class BookShelf extends React.Component{
       currentlyReading:[],
       wantToRead:[],
       read:[],
-      loading: true
+      loading: true,
+      books:[]
     };
+
+    this.updateShelfs = this.updateShelfs.bind(this);
+    this.updateView = this.updateView.bind(this);
   }
 
-  componentWillMount(){
+  updateView(){
     BooksAPI.getAll().then((books) => {
-
-      let shelfs;
-
-      shelfs = books.reduce(function (bookShelfs, item) {
-        let shelf = item.shelf;
-
-        if (shelf in bookShelfs) {
-          bookShelfs[shelf].push(item);
-        }
-        else {
-          bookShelfs[shelf] = [];
-          bookShelfs[shelf].push(item);
-        }
-
-        return bookShelfs;
-      }, []);
-
-      this.setState({
-        currentlyReading:shelfs.currentlyReading ? shelfs.currentlyReading : [],
-        wantToRead:shelfs.wantToRead ? shelfs.wantToRead : [],
-        read:shelfs.read ? shelfs.read : [],
-        loading:false
-      })
+      this.updateShelfs(books);
     });
+  }
 
+  updateShelfs(books){
+    let shelfs = books.reduce(function (bookShelfs, item) {
+      let shelf = item.shelf;
+
+      if (shelf in bookShelfs) {
+        bookShelfs[shelf].push(item);
+      }
+      else {
+        bookShelfs[shelf] = [];
+        bookShelfs[shelf].push(item);
+      }
+
+      return bookShelfs;
+    }, []);
+
+    this.setState({
+      currentlyReading:shelfs.currentlyReading ? shelfs.currentlyReading : [],
+      wantToRead:shelfs.wantToRead ? shelfs.wantToRead : [],
+      read:shelfs.read ? shelfs.read : [],
+      loading:false
+    });
+  }
+
+  componentDidMount(){
+    BooksAPI.getAll().then((books) => {
+      this.updateShelfs(books);
+    });
+  }
+
+  shouldComponentUpdate(nextProps,nextState) {
+    let currentlyReading = JSON.stringify(nextState.currentlyReading) === JSON.stringify(this.state.currentlyReading),
+        wantToRead = JSON.stringify(nextState.wantToRead) === JSON.stringify(this.state.wantToRead),
+        read = JSON.stringify(nextState.read) === JSON.stringify(this.state.read);
+    return (!currentlyReading || !wantToRead || !read);
+  }
+
+  componentDidUpdate(){
+    this.updateView();
   }
 
 
@@ -59,21 +80,21 @@ class BookShelf extends React.Component{
             {this.state.currentlyReading.length > 0 ? <div className="bookshelf">
               <h2 className="bookshelf-title">Currently Reading</h2>
               <div className="bookshelf-books">
-                <ListBooks books={this.state.currentlyReading} />
+                <ListBooks books={this.state.currentlyReading} handler={this.updateView}/>
               </div>
             </div> : ''}
             {this.state.wantToRead.length > 0 ?
             <div className="bookshelf">
               <h2 className="bookshelf-title">Want to Read</h2>
               <div className="bookshelf-books">
-                <ListBooks books={this.state.wantToRead} />
+                <ListBooks books={this.state.wantToRead} handler={this.updateView}/>
               </div>
             </div> : ''}
             {this.state.read.length > 0 ?
             <div className="bookshelf">
               <h2 className="bookshelf-title">Read</h2>
               <div className="bookshelf-books">
-                <ListBooks books={this.state.read} />
+                <ListBooks books={this.state.read} handler={this.updateView}/>
               </div>
             </div> : ''}
           </div>
