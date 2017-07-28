@@ -9,38 +9,34 @@ class Book extends React.Component {
 
   constructor(props){
     super(props);
-    this.state = {
-      id : '',
-      shelf: ''
-    }
-    //this.shelfChange = this.shelfChange.bind(this);
+
+    this.shelfChange = this.shelfChange.bind(this);
+    this.updateParent = this.updateParent.bind(this);
   }
 
   shelfChange(event){
-    this.setState({shelf:event.target.value});
+    BooksAPI.update({id:this.props.book.id},event.target.value).then(() =>(
+      this.updateParent()
+    ));
   }
 
-  componentDidMount(){
-    this.setState({
-      id:this.props.book.id,
-      shelf:this.props.book.shelf
-    });
-  }
-
-  componentDidUpdate(){
-    let book = {id:this.state.id};
-    BooksAPI.update(book,this.state.shelf);
+  updateParent(){
+    if(this.props.handler)
+      this.props.handler();
   }
 
   render() {
-    let book = this.props.book;
+    let book = this.props.book,
+        shelf = 'none';
+    if(this.props.handler)
+      shelf = this.props.book.shelf ? this.props.book.shelf : 'none';
 
     return(
         <div className="book">
           <div className="book-top">
             <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: 'url('+book.imageLinks.thumbnail+')' }}></div>
             <div className="book-shelf-changer">
-              <select value={this.state.shelf} onChange={(e) => this.shelfChange(e)}>
+              <select value={shelf} onChange={(e) => this.shelfChange(e)}>
                 <option value="" disabled>Move to...</option>
                 <option value="currentlyReading">Currently Reading</option>
                 <option value="wantToRead">Want to Read</option>
