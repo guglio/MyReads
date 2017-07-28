@@ -8,17 +8,26 @@ class ListBooks extends React.Component {
   }
 
   render() {
-    let showBooks = this.props.books;
-
-    return(
-      <ol className="books-grid">
-        {showBooks.map((books,index) => (
-          <li key={index}>
-            <Book book={books} />
-          </li>
-        ))}
-      </ol>
-    )
+    if(this.props.handler)
+      return(
+        <ol className="books-grid">
+          {this.props.books.map((books,index) => (
+            <li key={index}>
+              <Book book={books} handler={this.props.handler}/>
+            </li>
+          ))}
+        </ol>
+      )
+    else
+      return(
+        <ol className="books-grid">
+          {this.props.books.map((books,index) => (
+            <li key={index}>
+              <Book book={books}/>
+            </li>
+          ))}
+        </ol>
+      )
   }
 }
 
