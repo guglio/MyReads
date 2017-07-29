@@ -28,24 +28,12 @@ class BookShelf extends React.Component{
   }
 
   updateShelfs(books){
-    let shelfs = books.reduce(function (bookShelfs, item) {
-      let shelf = item.shelf;
-
-      if (shelf in bookShelfs) {
-        bookShelfs[shelf].push(item);
-      }
-      else {
-        bookShelfs[shelf] = [];
-        bookShelfs[shelf].push(item);
-      }
-
-      return bookShelfs;
-    }, []);
 
     this.setState({
-      currentlyReading:shelfs.currentlyReading ? shelfs.currentlyReading : [],
-      wantToRead:shelfs.wantToRead ? shelfs.wantToRead : [],
-      read:shelfs.read ? shelfs.read : [],
+      books,
+      currentlyReading: books.filter(book => book.shelf === 'currentlyReading'),
+      wantToRead: books.filter(book => book.shelf === 'wantToRead'),
+      read: books.filter(book => book.shelf === 'read'),
       loading:false
     });
   }
@@ -57,10 +45,9 @@ class BookShelf extends React.Component{
   }
 
   shouldComponentUpdate(nextProps,nextState) {
-    let currentlyReading = JSON.stringify(nextState.currentlyReading) === JSON.stringify(this.state.currentlyReading),
-        wantToRead = JSON.stringify(nextState.wantToRead) === JSON.stringify(this.state.wantToRead),
-        read = JSON.stringify(nextState.read) === JSON.stringify(this.state.read);
-    return (!currentlyReading || !wantToRead || !read);
+    let books = JSON.stringify(nextState.books) === JSON.stringify(this.state.books);
+    
+    return !books;
   }
 
   componentDidUpdate(){
