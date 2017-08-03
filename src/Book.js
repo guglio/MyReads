@@ -14,23 +14,26 @@ class Book extends React.Component {
     }
     this.shelfChange = this.shelfChange.bind(this);
     this.updateParent = this.updateParent.bind(this);
-    this.shelfCheck = this.shelfCheck.bind(this);
+    this.setShelf = this.setShelf.bind(this);
   }
 
-  shelfCheck(){
+  setShelf(){
     if(!this.props.handler){
       let that = this;
-      let book = JSON.parse(localStorage.getItem('library')).filter(book =>
-        book.id === that.props.book.id);
-      if(book.length === 1)
-        this.setState({shelf:book[0].shelf});
+      BooksAPI.getAll().then((books) => {
+        let book = books.filter(currBook  => currBook.id === that.props.book.id);
+        if(book.length === 1){
+          console.log(book);
+          that.setState({shelf:book[0].shelf});}
+        else
+          that.setState({shelf:'none'});
+      });
     }
   }
 
   shelfChange(event){
     this.setState({shelf:event.target.value});
-    BooksAPI.update({id:this.props.book.id},event.target.value).then((data) =>{
-      localStorage.setItem('data', data);
+    BooksAPI.update({id:this.props.book.id},event.target.value).then(() =>{
       this.updateParent();
     });
   }
@@ -40,14 +43,14 @@ class Book extends React.Component {
       this.props.handler();
   }
 
-  componentWillMount(){
-    this.shelfCheck();
+  componentDidMount(){
+    this.setShelf();
   }
   render() {
     let book = this.props.book;
 
     return(
-        <div className="book">
+        <div className="book" id={book.id}>
           <div className="book-top">
             <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: 'url('+book.imageLinks.thumbnail+')' }}></div>
             {this.state.shelf !== 'hide' ?

@@ -13,7 +13,6 @@ class BookShelf extends React.Component{
   constructor(props) {
     super(props);
     this.state = {
-
       loading: true,
       books:[]
     };
@@ -29,11 +28,6 @@ class BookShelf extends React.Component{
   }
 
   updateShelfs(books){
-
-    currentlyReading = books.filter(book => book.shelf === 'currentlyReading');
-    wantToRead = books.filter(book => book.shelf === 'wantToRead');
-    read = books.filter(book => book.shelf === 'read');
-    localStorage.setItem('library',JSON.stringify(books));
     this.setState({
       books,
       loading:false
@@ -58,6 +52,9 @@ class BookShelf extends React.Component{
 
 
   render(){
+    currentlyReading = this.state.books.filter(book => book.shelf === 'currentlyReading');
+    wantToRead = this.state.books.filter(book => book.shelf === 'wantToRead');
+    read = this.state.books.filter(book => book.shelf === 'read');
     return(
       <div className="list-books">
         <div className="list-books-title">
