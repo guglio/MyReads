@@ -22,9 +22,8 @@ class Book extends React.Component {
       let that = this;
       BooksAPI.getAll().then((books) => {
         let book = books.filter(currBook  => currBook.id === that.props.book.id);
-        if(book.length === 1){
-          console.log(book);
-          that.setState({shelf:book[0].shelf});}
+        if(book.length === 1)
+          that.setState({shelf:book[0].shelf});
         else
           that.setState({shelf:'none'});
       });
