@@ -23,7 +23,7 @@ class Book extends React.Component {
       let book = JSON.parse(localStorage.getItem('library')).filter(book =>
         book.id === that.props.book.id);
       if(book.length === 1)
-        this.setState({shelf:book.shelf});
+        this.setState({shelf:book[0].shelf});
     }
   }
 
