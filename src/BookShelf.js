@@ -5,14 +5,15 @@ import {
 } from 'react-router-dom'
 import ListBooks from './ListBooks.js'
 import './App.css'
+const currentlyReading=[],
+      wantToRead=[],
+      read=[]
 
 class BookShelf extends React.Component{
   constructor(props) {
     super(props);
     this.state = {
-      currentlyReading:[],
-      wantToRead:[],
-      read:[],
+
       loading: true,
       books:[]
     };
@@ -29,16 +30,17 @@ class BookShelf extends React.Component{
 
   updateShelfs(books){
 
+    currentlyReading = books.filter(book => book.shelf === 'currentlyReading');
+    wantToRead = books.filter(book => book.shelf === 'wantToRead');
+    read = books.filter(book => book.shelf === 'read');
+    localStorage.setItem('library',JSON.stringify(books));
     this.setState({
       books,
-      currentlyReading: books.filter(book => book.shelf === 'currentlyReading'),
-      wantToRead: books.filter(book => book.shelf === 'wantToRead'),
-      read: books.filter(book => book.shelf === 'read'),
       loading:false
     });
   }
 
-  componentDidMount(){
+  componentWillMount(){
     BooksAPI.getAll().then((books) => {
       this.updateShelfs(books);
     });
@@ -46,7 +48,7 @@ class BookShelf extends React.Component{
 
   shouldComponentUpdate(nextProps,nextState) {
     let books = JSON.stringify(nextState.books) === JSON.stringify(this.state.books);
-    
+
     return !books;
   }
 
@@ -64,24 +66,24 @@ class BookShelf extends React.Component{
         <div className="list-books-content">
           <div>
             {this.state.loading ? <h2 style={{textAlign:'center'}} className="loading">Loading<span>.</span><span>.</span><span>.</span></h2> : ''}
-            {this.state.currentlyReading.length > 0 ? <div className="bookshelf">
+            {currentlyReading.length > 0 ? <div className="bookshelf">
               <h2 className="bookshelf-title">Currently Reading</h2>
               <div className="bookshelf-books">
-                <ListBooks books={this.state.currentlyReading} handler={this.updateView}/>
+                <ListBooks books={currentlyReading} handler={this.updateView}/>
               </div>
             </div> : ''}
-            {this.state.wantToRead.length > 0 ?
+            {wantToRead.length > 0 ?
             <div className="bookshelf">
               <h2 className="bookshelf-title">Want to Read</h2>
               <div className="bookshelf-books">
-                <ListBooks books={this.state.wantToRead} handler={this.updateView}/>
+                <ListBooks books={wantToRead} handler={this.updateView}/>
               </div>
             </div> : ''}
-            {this.state.read.length > 0 ?
+            {read.length > 0 ?
             <div className="bookshelf">
               <h2 className="bookshelf-title">Read</h2>
               <div className="bookshelf-books">
-                <ListBooks books={this.state.read} handler={this.updateView}/>
+                <ListBooks books={read} handler={this.updateView}/>
               </div>
             </div> : ''}
           </div>
