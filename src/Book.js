@@ -14,13 +14,25 @@ class Book extends React.Component {
     }
     this.shelfChange = this.shelfChange.bind(this);
     this.updateParent = this.updateParent.bind(this);
+    this.shelfCheck = this.shelfCheck.bind(this);
+  }
+
+  shelfCheck(){
+    if(!this.props.handler){
+      let that = this;
+      let book = JSON.parse(localStorage.getItem('library')).filter(book =>
+        book.id === that.props.book.id);
+      if(book.length === 1)
+        this.setState({shelf:book.shelf});
+    }
   }
 
   shelfChange(event){
     this.setState({shelf:event.target.value});
-    BooksAPI.update({id:this.props.book.id},event.target.value).then(() =>(
-      this.updateParent()
-    ));
+    BooksAPI.update({id:this.props.book.id},event.target.value).then((data) =>{
+      localStorage.setItem('data', data);
+      this.updateParent();
+    });
   }
 
   updateParent(){
@@ -28,6 +40,9 @@ class Book extends React.Component {
       this.props.handler();
   }
 
+  componentWillMount(){
+    this.shelfCheck();
+  }
   render() {
     let book = this.props.book;
 
